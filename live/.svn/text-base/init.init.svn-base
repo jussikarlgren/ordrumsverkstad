@@ -1,0 +1,76 @@
+;--------------------------------------------------------
+; gavagai.scm - proprietary to gavagai ab; www.gavagai.se
+;--------------------------------------------------------
+; client specific global variables
+;--------------------------------------------------------
+(load "/home/gavagai/devel/vector.scm")
+(load "/home/gavagai/devel/word.scm")
+(load "/home/gavagai/devel/train.scm")
+(load "/home/gavagai/devel/poles.scm")
+(load "/home/gavagai/devel/anal.scm")
+(load "/home/gavagai/devel/core.scm")
+
+; vector length
+(define VEC 2000)
+
+; sparseness
+(define SPARSE 4)
+
+; initialize the encoder
+(set-seed 666)
+(init-encoder 100 VEC SPARSE)
+
+; do we want to forget?
+(define FORGET #t)
+
+; config for dirtrain
+(define DIR_WIN 2)
+
+; training type
+(define DOC #t)
+(define DIR #t)
+
+; association type
+(define PARA #t)
+(define ASS #t)
+
+; nr of nearest neighbors to extract for associative analysis
+(define NR_ASS 20)
+
+; compoisitonal doc reps?
+(define COMP #f)
+
+; stop list - set to '() if not needed
+(define STOP (string-split (read-line (open-input-file "/home/gavagai/Resurser/stoplista.se")) #\sp))
+
+; nr of nearest neighbors to add to the pole vectors
+; set to #f if no nn-expansion is wanted
+(define NR_NNS 10)
+
+; minimum frequency
+(define MINFREQ 3)
+
+; update period
+(define SEC 60)
+
+; data directory
+(define DATA "/home/gavagai/dummy/")
+
+; poles - set to #f if no polarization is wanted 
+(define POLES "/home/gavagai/dummy_poles.txt")
+
+; targets - set to #f if no targets are wanted
+(define TARGETS "/home/gavagai/dummy_targets.txt")
+
+; outfiles - 1 for targets, 2 for docs, 
+; 3 for paradigms, and 4 for associations
+(define OUTFILE1 "/home/gavagai/dummy.targets.out")
+(define OUTFILE2 "/home/gavagai/dummy.docs.out")
+(define OUTFILE3 "/home/gavagai/dummy.para.out")
+(define OUTFILE4 "/home/gavagai/dummy.ass.out")
+
+; clear or continue when seeing new data?
+(define CLEAR #f)
+
+; invoke the rabbit
+(gavagai)

@@ -1,0 +1,76 @@
+;--------------------------------------------------------
+; gavagai.scm - proprietary to gavagai ab; www.gavagai.se
+;--------------------------------------------------------
+; client specific global variables
+;--------------------------------------------------------
+(load "/home/jussi/live/vector.scm")
+(load "/home/jussi/live/word.scm")
+(load "/home/jussi/live/train.scm")
+(load "/home/jussi/live/poles.scm")
+(load "/home/jussi/live/anal.scm")
+(load "/home/jussi/live/core.scm")
+
+; vector length
+(define VEC 2000)
+
+; sparseness
+(define SPARSE 6)
+
+; initialize the encoder
+(set-seed 19651127)
+(init-encoder 100 VEC SPARSE)
+
+; do we want to forget?
+(define FORGET #f)
+
+; config for dirtrain
+(define DIR_WIN 2)
+
+; training type
+(define DOC #t)
+(define DIR #t)
+
+; association type
+(define PARA #t)
+(define ASS #t)
+
+; nr of nearest neighbors to extract for associative analysis
+(define NR_ASS 20)
+
+; compoisitonal doc reps?
+(define COMP #f)
+
+; stop list - set to '() if not needed
+(define STOP '());(string-split (read-line (open-input-file "/home/gavagai/Resurser/stoplista.se")) #\sp))
+
+; nr of nearest neighbors to add to the pole vectors
+; set to #f if no nn-expansion is wanted
+(define NR_NNS #f); 10)
+
+; minimum frequency
+(define MINFREQ 3)
+
+; update period
+;(define SEC 60)
+
+; data directory
+(define DATA "/bigdata/public/home/gavagai/dummy/")
+
+; poles - set to #f if no polarization is wanted 
+(define POLES "/home/gavagai/dummy_poles.txt")
+
+; targets - set to #f if no targets are wanted
+(define TARGETS "/home/gavagai/dummy_targets.txt")
+
+; outfiles - 1 for targets, 2 for docs, 
+; 3 for paradigms, and 4 for associations
+(define OUTFILE1 "/home/jussi/ordrumsverkstad/dummy.targets.out")
+(define OUTFILE2 "/home/jussi/ordrumsverkstad/dummy.docs.out")
+;(define OUTFILE3 "/home/jussi/ordrumsverkstad/dummy.para.out")
+;(define OUTFILE4 "/home/jussi/ordrumsverkstad/dummy.ass.out")
+
+; clear or continue when seeing new data?
+(define CLEAR #f)
+
+; invoke the rabbit
+(gavagai)

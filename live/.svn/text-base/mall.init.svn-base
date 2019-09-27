@@ -1,0 +1,121 @@
+;--------------------------------------------------------
+; gavagai.scm - proprietary to gavagai ab; www.gavagai.se
+;--------------------------------------------------------
+; client specific global variables
+;--------------------------------------------------------
+
+;========= project specific paths, sockets, labels etc
+(define PORT <integer>) ; if sockets are used
+(define LABEL (string-append <string> (number->string PORT)))
+(define PROJECT "/home/gavagai/Projekt/<directory>/")
+(define LOGFILE (string-append PROJECT LABEL "-" (number->string (getpid)) ".log" ))
+
+;========= source code
+(define BASE "/home/gavagai/stable/")
+(load (string-append BASE "vector.scm"))
+(load (string-append BASE "word.scm"))
+(load (string-append BASE "train.scm"))
+(load (string-append BASE "poles.scm"))
+(load (string-append BASE "anal.scm"))
+(load (string-append BASE "core.scm"))
+;(load (string-append BASE "socket.scm"))
+(load (string-append PROJECT <special-case-code-file>))
+
+;========= for vector.scm
+; vector length
+(define VEC 1000)
+; sparseness
+(define SPARSE 3)
+(define SEED 19651127)
+; initialize the encoder
+(set-seed SEED)
+(init-encoder 100 VEC SPARSE)
+
+;========= for train.scm
+; for weight function in train.scm
+(define KKK 10)
+(define AAA 0.1) ; NOT INTRODUCED IN CODE YET
+; do we want to forget?
+(define FORGET 0.9)
+
+
+; config for dirtrain
+(define DIR_WIN 2)
+
+; training type
+(define DOC #f)
+(define DIR #t)
+
+; association type
+(define PARA #f)
+(define ASS #f)
+
+; nr of nearest neighbors to extract for associative analysis
+(define NR_ASS 20)
+
+; compoisitonal doc reps?
+(define COMP #t)
+
+; stop list
+(define STOP (string-split (read-line (open-input-file "/home/gavagai/Resurser/stoplist.en")) #\sp))
+
+; nr of nearest neighbors to add to the pole vectors
+(define NR_NNS #f)
+
+; minimum frequency
+(define MINFREQ 3)
+
+;======= for anal.scm
+(define EXPVAR 3)
+(define FLIP #t)
+(define NEGATION (string-split (read-line (open-input-file "/home/gavagai/Resurser/negation.en")) #\sp))
+(define HEDGE 0.5) ; #f if not used
+(define HEDGELIST (string-split (read-line (open-input-file "/home/gavagai/Resurser/hedge.en")) #\sp))
+;======= for socket.scm
+(define LEARN #t) ; #f if we do not want the input to train the rabbit; #t if we want the new text in.
+;======= for core.scm
+; clear the text hash or continue when seeing new data?
+(define CLEAR #f)
+
+; update period
+(define SEC 1)
+
+; data directory
+;(define DATA (string-append PROJECT "data/"))
+(define DATA "/data/BloggDataSE")
+(define CHUNKS "/data/DataChunksSE")
+
+(define BGDATA "/data/SparadeWordspace/backgroundPressEN-LAT-forget1.wordspace")
+;(define BGDATA #f)
+
+; poles - set to #f if no polarization is wanted 
+(define POLES "/home/gavagai/Poler/generic.txt")
+
+; targets
+(define TARGETS #f)
+
+;=======  infiles 
+(define filename-date-regex "([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])-([a-z0-9]+).txt")
+;(define filename-date-regex #f)
+(define date (date->string (time-utc->date (current-time)) "~1"))
+(define CONSUME #f)
+(define (extract-date ms) (if (regexp-match? ms) (string-append (match:substring ms 1) "-" (match:substring ms 2) "-" (match:substring ms 3)) (date)))
+
+;=======  outfiles 
+; 1 target tracking
+; 2 document tracking
+; 3 paradigms
+; 4 associations
+; 5 wordspaces
+(define OUTFILE1 #f) ; (string-append PROJECT LABEL ".targets.out"))
+(define OUTFILE2 (string-append PROJECT LABEL ".docs.out"))
+(define OUTFILE3 #f) ; 
+(define OUTFILE4 #f) ; 
+(define OUTFILE5 (string-append "/data/SparadeWordspace" "gavagai." LABEL "." date ".wordspace"))
+
+
+(define UGLY_HACK_TMPFILE  (string-append PROJECT "tmpfile." LABEL) )
+
+
+; invoke the rabbit
+;(gavagai)
