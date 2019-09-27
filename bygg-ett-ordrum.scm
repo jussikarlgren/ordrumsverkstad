@@ -7,11 +7,9 @@
 
 ;========= project specific paths, sockets, labels etc
 (define PROJECT "/home/jussi/projekt/ordrumsverkstad/")
-;(define DATADIRECTORY "/home/jussi/projekt/2019.svsprlabb/ordrumsverkstad/")
-(define DATADIRECTORY "/repository/data/wikipedia/sv/")
-;(define infile "liten");
-(define infile (string-append DATADIRECTORY "svwikiclean.txt"))
-(define LABEL "wiki")
+(define DATADIRECTORY "/home/jussi/projekt/ordrumsverkstad/data/")
+(define infile (string-append DATADIRECTORY "alice-rinse.txt"))
+(define LABEL "alice")
 (display (string-append "processing " infile))
 (newline)
 ;========= for vector.scm
@@ -48,24 +46,26 @@
 
 (define (run-file infile) 
   (begin 
-    (train-file infile DIRECTION (1+ WIN) DOC) ;; add one to window for starting index snafu purposes
+    (train-file infile DIRECTION (1+ WIN) DOC OUTFILE5) ;; add one to window for starting index snafu purposes
     (if (defined? (quote OUTFILE5))
-	(let (
-	      (scotch (open-file LOGFILE "a")))
-	  (display (string-append "exporting words to " OUTFILE5) scotch)
-	  (export-words OUTFILE5)
-	  (newline scotch)
-	  (close scotch)
-	);let
-	);if outifle5
+	  (logger (string-append "exporting words to " OUTFILE5))
+	  );if outifle5
     )
 )
 
-(define (train-file infile dir win doc)
-  (if (> win 0) (display (string-append "Context window training\n")))
-  (if (and (> win 0) dir) (display "Directional windows\n"))
-  (if doc (display "Document contexts\n"))
-  (display "Started: ")(display (time))
+(define (logger message)
+  (display LABEL)  
+  (display " ")
+  (display message)
+  (display " ")
+  (display (time))
+  )
+
+(define (train-file infile dir win doc OUTFILE)
+  (if (> win 0) (logger "Context window training"))
+  (if (and (> win 0) dir) (logger "Directional windows"))
+  (if doc (logger "Document contexts"))
+  (logger "Started training")
   (let* ((in (open-input-file infile))
 	 (line (read-line in))
 	 (nr_docs 0))
@@ -73,13 +73,21 @@
 	   (set! nr_docs (1+ nr_docs))
 	   (if (not (equal? "" line))
 	       (let ((lst (delete "" (string-split line #\sp))))
-		 (display (time)) (display " ") (display nr_docs) (newline)
-		 (if (> win 0) (train-win lst win dir))
-		 (if doc (train-document lst nr_docs))
+		 (if (= (modulo 1000 nr_docs) 0)
+		     (begin
+		       (logger nr_docs)
+		       (export-words OUTFILE)
+		       ))
+		 (if (> win 0)
+		     (train-win lst win dir))
+		 (if doc
+		     (train-document lst nr_docs))
 		 ))
-	   (set! line (read-line in))))
-  (display nr_words) (display " words processed\n")
-  (display "Finished: ")(display (time)))
+	   (set! line (read-line in)))
+    (logger (string-append "Number of documents processed: " (number->string nr_docs)))
+    (logger (string-append "Number of words processed: " (number->string nr_words)))
+  )
+  (logger "Completed training"))
 
 
 (define WEIGHTCONSTANT 20)
